@@ -12,7 +12,7 @@ import os
 load_dotenv()
 
 # Setting up OpenAI llm with model and API key
-model = ChatOpenAI(model="gpt-4.1", temperature=0, openai_api_key=os.getenv("OPENAI_API_KEY"))
+model = ChatOpenAI(model="gpt-4o-mini", temperature=0, openai_api_key=os.getenv("OPENAI_API_KEY"))
 
 
 # Connect to FireCrawl MCP server
