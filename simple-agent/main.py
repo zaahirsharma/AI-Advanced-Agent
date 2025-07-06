@@ -21,7 +21,7 @@ model = ChatOpenAI(model="gpt-4.1", temperature=0, openai_api_key=os.getenv("OPE
 server_params = StdioServerParameters(
     command = "npx",
     env={
-        FIRECRAWL_API_KEY: os.getenv("FIRECRAWL_API_KEY"),
+        "FIRECRAWL_API_KEY": os.getenv("FIRECRAWL_API_KEY"),
     },
     args = ["firecrawl-mcp"]
 )
@@ -36,7 +36,7 @@ async def main():
             await session.initialize()
             # Find all tools available in session and use
             tools = await load_mcp_tools(session)
-            agent = create_react_agent(llm=llm, tools=tools)
+            agent = create_react_agent(model, tools)
             
             # Prompt for agent
             messages = [
