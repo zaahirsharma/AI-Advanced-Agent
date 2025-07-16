@@ -18,7 +18,25 @@ class Workflow:
 
 
     def _build_workflow(self):
-        pass
+        # Initialize the state graph
+        graph = StateGraph()
+        
+        # Creating nodes for graph, referencing fuctions not calling them (3 steps = 3 nodes)
+        graph.add_node("extract_tools", self._extract_tools_step)
+        graph.add_node("research", self._research_step)
+        graph.add_node("analyze", self._analyze_step)
+        
+        # Set entry point for the workflow (first step)
+        graph.set_entry("extract_tools")
+        
+        # Set order of execution (after exract_tools, research will be called, then analyze)
+        graph.add_edge("extract_tools", "research")
+        graph.add_edge("research", "analyze")
+        # Final edge (must have), to indicate end of workflow
+        graph.add_edge("analyze", END) 
+        
+        return graph.compile()
+        
     
     # Set up langgraph
     # Create graph that agent flows through
@@ -182,3 +200,16 @@ class Workflow:
         response = self.llm.invoke(messages)
         # Updating state with the analysis result
         return {"analysis": response.content}
+    
+    
+    # Function that will run the entire workflow graph
+    def run(self, query: str) -> ResearchState:
+        
+        # Create initial state with user query
+        initial_state = ResearchState(query=query)
+        
+        # Invoke the workflow with the initial state
+        final_state = self.workflow.invoke(initial_state)
+        
+        # Final state in dictionary form, take all fields and insert into ResearchState object
+        return ResearchState(**final_state)
