@@ -19,7 +19,7 @@ class Workflow:
 
     def _build_workflow(self):
         # Initialize the state graph
-        graph = StateGraph()
+        graph = StateGraph(ResearchState)
         
         # Creating nodes for graph, referencing fuctions not calling them (3 steps = 3 nodes)
         graph.add_node("extract_tools", self._extract_tools_step)
@@ -27,7 +27,7 @@ class Workflow:
         graph.add_node("analyze", self._analyze_step)
         
         # Set entry point for the workflow (first step)
-        graph.set_entry("extract_tools")
+        graph.set_entry_point("extract_tools")
         
         # Set order of execution (after exract_tools, research will be called, then analyze)
         graph.add_edge("extract_tools", "research")
@@ -96,7 +96,7 @@ class Workflow:
         
     
     # Step to analyze each tool (helper method)
-    def _analyze_step(self, company_name: str, content: str) -> CompanyAnalysis:
+    def _analyze_company_content(self, company_name: str, content: str) -> CompanyAnalysis:
         
         # Use the LLM to analyze a specific company/tool based on its content
         structured_llm = self.llm.with_structured_output(CompanyAnalysis)
